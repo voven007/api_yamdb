@@ -1,0 +1,20 @@
+from django.contrib import admin
+# from django.contrib.auth.admin import UserAdmin
+from .models import MyUser
+
+
+@admin.register(MyUser)
+class MyUserAdmin(admin.ModelAdmin):
+    pass
+
+# UserAdmin.fieldsets += (
+#     ('Extra Fields', {'fields': (
+#         'username',
+#         'email',
+#         'first_name',
+#         'last_name',
+#         'bio',
+#         'role',)}),
+# )
+
+# admin.site.register(MyUser, UserAdmin)
