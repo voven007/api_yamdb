@@ -15,11 +15,14 @@ class MyUser(AbstractUser):
         max_length=150,
         verbose_name='Имя пользователя',
         unique=True,
-        blank=True)
-    email = models.CharField(
+        blank=False,
+        null=False)
+    email = models.EmailField(
         max_length=254,
         verbose_name='E-mail',
-        blank=True)
+        unique=True,
+        blank=False,
+        null=False)
     first_name = models.CharField(
         max_length=150,
         verbose_name='Имя',
@@ -37,7 +40,8 @@ class MyUser(AbstractUser):
     role = models.CharField(
         max_length=150,
         verbose_name='Роль',
-        blank=True,)
+        blank=False,
+        null=False)
 
 # widget=forms.Select(
 #             choices=ENUM_CHOICES)
