@@ -1,6 +1,4 @@
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
-
 
 from reviews.validator import validate_year
 
@@ -49,8 +47,6 @@ class Title(models.Model):
     name = models.CharField(
         verbose_name='Название произведения',
         max_length=256,
-        null=False,
-        blank=False
     )
     year = models.IntegerField(
         verbose_name='Год произведения',
@@ -60,19 +56,18 @@ class Title(models.Model):
         verbose_name='Описание произведения',
         default='-пусто-',
         blank=True,
-        null=True,
+        null=True
     )
     genre = models.ManyToManyField(
         Genre,
-        verbose_name='Жанр произведения',
-        blank=True
+        verbose_name='Жанр произведения'
     )
     category = models.ForeignKey(
         Category,
         verbose_name='Категория произведения',
         related_name='titles',
         on_delete=models.SET_NULL,
-        null=True,
+        null=True
     )
 
     class Meta:
