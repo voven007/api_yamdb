@@ -5,16 +5,7 @@ from .models import MyUser
 
 @admin.register(MyUser)
 class MyUserAdmin(admin.ModelAdmin):
-    pass
-
-# UserAdmin.fieldsets += (
-#     ('Extra Fields', {'fields': (
-#         'username',
-#         'email',
-#         'first_name',
-#         'last_name',
-#         'bio',
-#         'role',)}),
-# )
-
-# admin.site.register(MyUser, UserAdmin)
+    list_display = (
+        'username', 'email', 'first_name', 'last_name', 'bio', 'role')
+    search_fields = (
+        'username', 'email', 'first_name', 'last_name', 'role')
