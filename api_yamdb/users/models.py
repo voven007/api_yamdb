@@ -1,47 +1,43 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import RegexValidator
 from django.db import models
-# from django import forms
-
-
-# ENUM_CHOICES = [
-#     'user',
-#     'moderator',
-#     'admin',
-# ]
 
 
 class MyUser(AbstractUser):
+    USER = 'user'
+    ADMIN = 'admin'
+    MODERATOR = 'moderator'
+    ROLES = [
+        (USER, 'user'),
+        (ADMIN, 'admin'),
+        (MODERATOR, 'moderator')
+    ]
+
     username = models.CharField(
         max_length=150,
         verbose_name='Имя пользователя',
         unique=True,
-        blank=False,
-        null=False)
+        validators=[RegexValidator(
+            regex=r'^[\w.@+-]+$',
+            message='Имя пользователя содержит недопустимый символ'
+        )])
     email = models.EmailField(
         max_length=254,
         verbose_name='E-mail',
-        unique=True,
-        blank=False,
-        null=False)
+        unique=True,)
     first_name = models.CharField(
         max_length=150,
         verbose_name='Имя',
-        null=True,
         blank=True)
     last_name = models.CharField(
         max_length=150,
         verbose_name='Фамилия',
-        null=True,
         blank=True)
     bio = models.TextField(
         verbose_name='Биография',
-        null=True,
         blank=True)
     role = models.CharField(
         max_length=150,
         verbose_name='Роль',
-        blank=False,
-        null=False)
-
-# widget=forms.Select(
-#             choices=ENUM_CHOICES)
+        choices=ROLES,
+        default=USER)
