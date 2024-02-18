@@ -1,6 +1,7 @@
 from rest_framework import serializers
+from rest_framework.generics import get_object_or_404
 
-from reviews.models import Category, Genre, Title
+from reviews.models import Category, Comment, Genre, Title, Review
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -49,3 +50,47 @@ class TitleReadSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'name', 'year', 'rating', 'description', 'genre', 'category'
         )
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    """Сериализатор для отзывов на произведения."""
+
+    author = serializers.SlugRelatedField(
+        slug_field='username',
+        read_only=True,
+        default=serializers.CurrentUserDefault()
+    )
+    title = serializers.SlugRelatedField(
+        slug_field='name',
+        read_only=True,
+        default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = Review
+        fields = ('id', 'text', 'title', 'author', 'pub_date', 'score')
+
+    def validate(self, data):
+        title_id = (
+            self.context['request'].parser_context['kwargs']['title_id']
+        )
+        title = get_object_or_404(Title, pk=title_id)
+        author = self.context['request'].user
+        if (self.context['request'].method == 'POST'
+           and Review.objects.filter(title=title, author=author).exists()):
+            raise serializers.ValidationError(
+                "Нельзя добавлять более одного отзыва"
+            )
+        return data
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    """Сериализатор для комментариев к отзывам."""
+    author = serializers.SlugRelatedField(
+        slug_field="username",
+        read_only=True
+    )
+
+    class Meta:
+        model = Comment
+        fields = ('id', 'author', 'pub_date', 'text')
