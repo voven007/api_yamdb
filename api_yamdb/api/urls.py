@@ -17,5 +17,5 @@ router.register(
 )
 
 urlpatterns = [
-    path('v1/', include(router.urls)),
+    path('v1/', include(router.urls)), # http://127.0.0.1:8000/api/v1/titles/1/reviews/
 ]

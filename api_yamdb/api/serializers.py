@@ -31,6 +31,6 @@ class CommentSerializer(serializers.ModelSerializer):
         read_only=True,
     )
 
-     class Comment:
+     class Meta:
         model = Comment
         fields = ('__all__')
