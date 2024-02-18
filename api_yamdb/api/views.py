@@ -34,7 +34,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
 
-    def get_queryset(self):
+    def get_queryset(self): 
         review = get_object_or_404(
             Review,
             pk=self.kwargs.get('review_id'),
