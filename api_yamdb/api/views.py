@@ -19,9 +19,11 @@ from api.serializers import (
 )
 from reviews.models import Category, Genre, Title, Review
 
+from users.models import MyUser
+
 
 class UserViewSet(viewsets.ModelViewSet):
-    pass
+    queryset = MyUser.objects.all()
 
 
 class MeView(RetrieveUpdateAPIView):
