@@ -12,7 +12,7 @@ class MixinViewSet(ListCreateAPIView,
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
-    lookup_field = ('slug',)
+    lookup_field = 'slug'
 
     def get(self, request, *args, **kwargs):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
