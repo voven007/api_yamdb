@@ -3,12 +3,13 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Avg
-from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import CreateAPIView
 from rest_framework.generics import get_object_or_404
+from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters
 
 
 from api.filters import TitleFilter
@@ -20,7 +21,6 @@ from api.permissions import (
 )
 from api.serializers import (
     UserSerializer,
-    UserMeSerializer,
     TokenSerializer,
     SignupSerializer,
     CategorySerializer,
@@ -39,26 +39,24 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = MyUser.objects.all()
     serializer_class = UserSerializer
     permission_classes = (IsAdmin,)
-    http_method_names = ["get", "patch", "post", "delete"]
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('username',)
+    lookup_field = 'username'
+    http_method_names = ['get', 'patch', 'post', 'delete']
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        data = serializer.data
-        return Response(
-            data,
-            status=status.HTTP_201_CREATED,
-        )
-
-
-class MeView(RetrieveUpdateAPIView):
-    serializer_class = UserMeSerializer
-    permission_classes = (IsAuthenticated,)
-    http_method_names = ["get", "patch"]
-
-    def get_object(self):
-        return self.request.user
+    @action(detail=False,
+            methods=('get', 'patch'),
+            url_name='me',
+            permission_classes=(IsAuthenticated,))
+    def adding_profile(self, request):
+        if request.method == 'PATCH':
+            serializer = self.get_serializer(
+                request.user, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save(role=request.user.role)
+        else:
+            serializer = self.get_serializer(request.user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class SignupView(CreateAPIView):

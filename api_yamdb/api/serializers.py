@@ -1,24 +1,26 @@
 from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
 from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
-# from django.core.validators import RegexValidator
+# from django.core.validators import (
+#     RegexValidator,
+#     EmailValidator,
+#     RegexValidator)
+
 
 from reviews.models import Category, Comment, Genre, Title, Review
 from users.models import MyUser
 
 
 class UserSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(
-        max_length=254,
-        required=True,
-        validators=[UniqueValidator(queryset=MyUser.objects.all())],
-    )
-    username = serializers.RegexField(
-        regex="^[\\w.@+-]+",
-        max_length=150,
-        required=True,
-        validators=[UniqueValidator(queryset=MyUser.objects.all())],
-    )
+    # email = serializers.EmailField(
+    #     max_length=254,
+    #     validators=[UniqueValidator(queryset=MyUser.objects.all())],
+    # )
+    # username = serializers.RegexField(
+    #     regex="^[\\w.@+-]+",
+    #     max_length=150,
+    #     validators=[UniqueValidator(queryset=MyUser.objects.all())],
+    # )
 
     class Meta:
         fields = (
@@ -35,36 +37,27 @@ class UserSerializer(serializers.ModelSerializer):
                 queryset=MyUser.objects.all(),
                 fields=("username", "email"),
                 message="Такой пользователь уже существует",
-            ),
+            )
+
         ]
 
-    def validate_username(self, value):
-        if value.lower() == "me":
+    def validate_username(self, username):
+        if username.lower() == "me":
             raise serializers.ValidationError("Нельзя использовать такое имя!")
-        return value
+        return username
 
-    def create(self, validated_data):
-        if self.is_valid():
-            user, created = MyUser.objects.get_or_create(**validated_data)
-            user.save()
-        return user
+    # def validate_email(self, email):
+    #     if not email:
+    #         raise serializers.ValidationError(
+    #             'Отстутвие обязательного поля'
+    #         )
+    #     return email
 
-
-class UserMeSerializer(UserSerializer):
-    class Meta:
-        fields = (
-            "username",
-            "email",
-            "first_name",
-            "last_name",
-            "bio",
-            "role",
-        )
-        model = MyUser
-        read_only_fields = (
-            "id",
-            "role",
-        )
+    # def create(self, validated_data):
+    #     if self.is_valid():
+    #         user, created = MyUser.objects.get_or_create(**validated_data)
+    #         user.save()
+    #     return user
 
 
 class TokenSerializer(serializers.ModelSerializer):
