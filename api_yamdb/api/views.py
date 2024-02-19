@@ -141,6 +141,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
+    http_method_names = ['get', 'post', 'delete', 'patch', ]
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
@@ -152,6 +153,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
     """ViewSet для модели Review."""
     serializer_class = ReviewSerializer
     permission_classes = (IsAdminOrIsModeratorOrIsUser,)
+    http_method_names = ['get', 'post', 'delete', 'patch', ]
 
     def get_queryset(self):
         title = get_object_or_404(Title, pk=self.kwargs.get("title_id"))
@@ -166,6 +168,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     """ViewSet для модели Comment."""
     serializer_class = CommentSerializer
     permission_classes = (IsAdminOrIsModeratorOrIsUser,)
+    http_method_names = ['get', 'post', 'delete', 'patch', ]
 
     def get_queryset(self):
         review = get_object_or_404(Review, pk=self.kwargs.get("review_id"))
