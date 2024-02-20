@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
 from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
+from django.contrib.auth.validators import UnicodeUsernameValidator
 # from django.core.validators import (
 #     RegexValidator,
 #     EmailValidator,
@@ -12,38 +13,32 @@ from users.models import MyUser
 
 
 class UserSerializer(serializers.ModelSerializer):
-    # email = serializers.EmailField(
-    #     max_length=254,
-    #     validators=[UniqueValidator(queryset=MyUser.objects.all())],
-    # )
-    # username = serializers.RegexField(
-    #     regex="^[\\w.@+-]+",
-    #     max_length=150,
-    #     validators=[UniqueValidator(queryset=MyUser.objects.all())],
-    # )
+    email = serializers.EmailField(
+        max_length=254,
+        validators=[UniqueValidator(queryset=MyUser.objects.all())],
+    )
+
+    username = serializers.RegexField(
+        regex=r'^[\w.@+-]+$',
+        max_length=150,
+        validators=[UniqueValidator(queryset=MyUser.objects.all())],
+    )
 
     class Meta:
         fields = (
-            "username",
-            "email",
-            "first_name",
-            "last_name",
-            "bio",
-            "role",
-        )
+            "username", "email", "first_name", "last_name", "bio", "role",)
         model = MyUser
-        validators = [
-            UniqueTogetherValidator(
-                queryset=MyUser.objects.all(),
-                fields=("username", "email"),
-                message="Такой пользователь уже существует",
-            )
-
-        ]
+        # validators = [
+        #     UniqueTogetherValidator(
+        #         queryset=MyUser.objects.all(),
+        #         fields=("username", "email"),
+        #         message="Такой пользователь уже существует",
+        #     )
+        # ]
 
     def validate_username(self, username):
         if username.lower() == "me":
-            raise serializers.ValidationError("Нельзя использовать такое имя!")
+            raise serializers.ValidationError("Нельзя использовать это имя!")
         return username
 
     # def validate_email(self, email):

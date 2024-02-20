@@ -1,5 +1,6 @@
 
 from django.contrib.auth.tokens import default_token_generator
+from rest_framework.pagination import LimitOffsetPagination
 from django.core.mail import send_mail
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Avg
@@ -39,6 +40,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = MyUser.objects.all()
     serializer_class = UserSerializer
     permission_classes = (IsAdmin,)
+    pagination_class = LimitOffsetPagination
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
     lookup_field = 'username'
@@ -56,7 +58,7 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer.save(role=request.user.role)
         else:
             serializer = self.get_serializer(request.user)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class SignupView(CreateAPIView):
