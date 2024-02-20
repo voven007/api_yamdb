@@ -163,6 +163,13 @@ class ReviewViewSet(viewsets.ModelViewSet):
         title = get_object_or_404(Title, pk=self.kwargs.get("title_id"))
         serializer.save(author=self.request.user, title=title)
 
+    def update(self, request, *args, **kwargs):
+        if request.method == 'PUT':
+            msg = {"error": f'Метод {request.method} не доступен.'}
+            return Response(
+                data=msg, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        return super().update(request, *args, **kwargs)
+    
 
 class CommentViewSet(viewsets.ModelViewSet):
     """ViewSet для модели Comment."""
@@ -179,3 +186,10 @@ class CommentViewSet(viewsets.ModelViewSet):
         review_id = self.kwargs.get("review_id")
         review = get_object_or_404(Review, pk=review_id, title=title_id)
         serializer.save(author=self.request.user, review=review)
+
+    def update(self, request, *args, **kwargs):
+        if request.method == 'PUT':
+            msg = {"error": f'Метод {request.method} не доступен.'}
+            return Response(
+                data=msg, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        return super().update(request, *args, **kwargs)
