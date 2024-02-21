@@ -1,46 +1,35 @@
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import RegexValidator
 from django.db import models
+from django.core.validators import RegexValidator
 
 USER = 'user'
 ADMIN = 'admin'
 MODERATOR = 'moderator'
-ROLES = [
-    (USER, 'Пользователь'),
-    (ADMIN, 'Администратор'),
-    (MODERATOR, 'Модератор')
-]
+
+ROLES = ((USER, 'Аутентифицированный пользователь'),
+         (MODERATOR, 'Модератор'),
+         (ADMIN, 'Администратор'))
 
 
 class MyUser(AbstractUser):
+    """Модель прользователей"""
     username = models.CharField(
         max_length=150,
-        verbose_name='Имя пользователя',
         unique=True,
+        null=False,
         validators=[RegexValidator(
             regex=r'^[\w.@+-]+$',
-            message='Имя пользователя содержит недопустимый символ'
-        )])
+            message='Недопустимый символ в имени'
+        )]
+    )
     email = models.EmailField(
-        max_length=254,
-        verbose_name='E-mail',
-        unique=True,)
-    first_name = models.CharField(
-        max_length=150,
-        verbose_name='Имя',
-        blank=True)
-    last_name = models.CharField(
-        max_length=150,
-        verbose_name='Фамилия',
-        blank=True)
-    bio = models.TextField(
-        verbose_name='Биография',
-        blank=True)
+        max_length=254, unique=True, blank=False, null=False
+    )
+    first_name = models.CharField("имя", max_length=150, blank=True)
+    last_name = models.CharField("фамилия", max_length=150, blank=True)
+    bio = models.TextField('Биография', blank=True)
     role = models.CharField(
-        max_length=150,
-        verbose_name='Роль',
-        choices=ROLES,
-        default=USER)
+        'Роль пользователя', max_length=15, choices=ROLES, default=USER)
 
     class Meta:
         verbose_name = "Пользователь"
@@ -53,3 +42,6 @@ class MyUser(AbstractUser):
     @property
     def is_moderator(self):
         return self.role == MODERATOR
+
+    class Meta:
+        ordering = ('pk',)
