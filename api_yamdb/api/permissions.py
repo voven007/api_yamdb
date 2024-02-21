@@ -2,7 +2,6 @@ from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 
 class IsAdmin(BasePermission):
-    """Пермишн для админа"""
     message = 'Вы должны иметь права администратора'
 
     def has_permission(self, request, view):
