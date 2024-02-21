@@ -11,16 +11,15 @@ from users.models import MyUser, ROLES
 class UserSerializer(serializers.ModelSerializer):
     """Сериализатор для пользователей."""
 
-    email = serializers.EmailField(max_length=254,
-                                   validators=[
-                                       UniqueValidator(
-                                           queryset=MyUser.objects.all()),
-                                   ])
-    username = serializers.CharField(max_length=150,
-                                     validators=[RegexValidator(
-                                         regex=r'^[\w.@+-]+$',
-                                         message='Недопустимый символ в имени'
-                                     )])
+    email = serializers.EmailField(
+        max_length=254,
+        validators=[UniqueValidator(
+            queryset=MyUser.objects.all()),])
+    username = serializers.CharField(
+        max_length=150,
+        validators=[RegexValidator(
+            regex=r'^[\w.@+-]+$',
+            message='Недопустимый символ в имени пользователя')])
 
     class Meta:
         model = MyUser
@@ -30,16 +29,8 @@ class UserSerializer(serializers.ModelSerializer):
         username = username.lower()
         if username == "me":
             raise serializers.ValidationError(
-                'Запрещенное имя для регистрации.'
-            )
+                'Имя пользователя "me" не доступно для регистрации.')
         return username
-
-    def validate_email(self, email):
-        if not email:
-            raise serializers.ValidationError(
-                'Отстутвие обязательного поля'
-            )
-        return email
 
 
 class JWTTokenSerializer(serializers.Serializer):
@@ -52,20 +43,19 @@ class JWTTokenSerializer(serializers.Serializer):
         if not MyUser.objects.filter(username=data['username']).exists():
             raise exceptions.NotFound(
                 'Такого пользователя не существует')
-
         return data
 
 
 class AdminSerializer(serializers.ModelSerializer):
     """Сериализатор для админа."""
 
-    email = serializers.EmailField(max_length=254,
-                                   validators=[
-                                       UniqueValidator(
-                                           queryset=MyUser.objects.all()
-                                       )
-                                   ])
-    role = serializers.ChoiceField(choices=ROLES, required=False)
+    email = serializers.EmailField(
+        max_length=254,
+        validators=[UniqueValidator(
+            queryset=MyUser.objects.all())])
+    role = serializers.ChoiceField(
+        choices=ROLES,
+        required=False)
 
     class Meta:
         model = MyUser
@@ -149,7 +139,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         if (self.context['request'].method == 'POST'
            and Review.objects.filter(title=title, author=author).exists()):
             raise serializers.ValidationError(
-                "Нельзя добавлять более одного отзыва"
+                "Можно добавить только один отзыв"
             )
         return data
 
