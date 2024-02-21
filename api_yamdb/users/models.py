@@ -1,47 +1,55 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-# from django import forms
+from django.core.validators import RegexValidator
 
+USER = 'user'
+ADMIN = 'admin'
+MODERATOR = 'moderator'
 
-# ENUM_CHOICES = [
-#     'user',
-#     'moderator',
-#     'admin',
-# ]
+ROLES = ((USER, 'Аутентифицированный пользователь'),
+         (MODERATOR, 'Модератор'),
+         (ADMIN, 'Администратор'))
 
 
 class MyUser(AbstractUser):
+    """Модель прользователей"""
     username = models.CharField(
         max_length=150,
-        verbose_name='Имя пользователя',
         unique=True,
-        blank=False,
-        null=False)
+        null=False,
+        validators=[RegexValidator(
+            regex=r'^[\w.@+-]+$',
+            message='Недопустимый символ в имени пользователя'
+        )])
     email = models.EmailField(
         max_length=254,
-        verbose_name='E-mail',
         unique=True,
         blank=False,
         null=False)
     first_name = models.CharField(
         max_length=150,
-        verbose_name='Имя',
-        null=True,
         blank=True)
     last_name = models.CharField(
         max_length=150,
-        verbose_name='Фамилия',
-        null=True,
         blank=True)
     bio = models.TextField(
-        verbose_name='Биография',
-        null=True,
         blank=True)
     role = models.CharField(
-        max_length=150,
-        verbose_name='Роль',
-        blank=False,
-        null=False)
+        max_length=15,
+        choices=ROLES,
+        default=USER)
 
-# widget=forms.Select(
-#             choices=ENUM_CHOICES)
+    class Meta:
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
+
+    @property
+    def is_admin(self):
+        return self.role == ADMIN
+
+    @property
+    def is_moderator(self):
+        return self.role == MODERATOR
+
+    class Meta:
+        ordering = ('pk',)
