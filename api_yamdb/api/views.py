@@ -1,23 +1,20 @@
-from rest_framework.pagination import LimitOffsetPagination
 from django.contrib.auth.tokens import default_token_generator
-from django.shortcuts import get_object_or_404
 from django.db.models import Avg
 from django_filters.rest_framework import DjangoFilterBackend
+from django.shortcuts import get_object_or_404
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import AccessToken
-
-
 from api.filters import TitleFilter
 from api.mixins import MixinViewSet
 from api.permissions import (
     IsAdmin,
     IsAdminOrIsModeratorOrIsUser,
-    IsAdminOrReadOnly
-)
+    IsAdminOrReadOnly)
+from api.utils import send_confirmation_code_on_email
 from .serializers import (
     AdminSerializer,
     JWTTokenSerializer,
@@ -27,15 +24,12 @@ from .serializers import (
     TitleCreateSerializer,
     TitleReadSerializer,
     CommentSerializer,
-    ReviewSerializer
-)
-from api.utils import send_confirmation_code_on_email
+    ReviewSerializer)
 from reviews.models import Category, Genre, Title, Review
-
 from users.models import MyUser
 
 
-class SignUp(APIView):
+class SignUpView(APIView):
     """Вьюкласс для регистрации пользователей"""
 
     permission_classes = (AllowAny,)
@@ -65,7 +59,7 @@ class SignUp(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class APIToken(APIView):
+class APITokenView(APIView):
     """Вьюкласс для получения токена"""
 
     permission_classes = (AllowAny,)
@@ -78,10 +72,8 @@ class APIToken(APIView):
             if default_token_generator.check_token(
                user, serializer.data['confirmation_code']):
                 token = AccessToken.for_user(user)
-
                 return Response(
                     {'token': str(token)}, status=status.HTTP_200_OK)
-
             return Response(
                 {'confirmation_code': 'Неверный код подтверждения'},
                 status=status.HTTP_400_BAD_REQUEST)
@@ -107,9 +99,7 @@ class UserViewSet(viewsets.ModelViewSet):
             partial=True)
         if serializer.is_valid():
             serializer.save(role=self.request.user.role)
-
             return Response(serializer.data, status=status.HTTP_200_OK)
-
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -162,7 +152,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
             return Response(
                 data=msg, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         return super().update(request, *args, **kwargs)
-    
+
 
 class CommentViewSet(viewsets.ModelViewSet):
     """ViewSet для модели Comment."""
