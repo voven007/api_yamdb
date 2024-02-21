@@ -9,7 +9,7 @@ from users.models import MyUser, ROLES
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """Сериалайзер для пользователей"""
+    """Сериализатор для пользователей."""
 
     email = serializers.EmailField(max_length=254,
                                    validators=[
@@ -43,7 +43,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class JWTTokenSerializer(serializers.Serializer):
-    """Сериалайзер для получения токена"""
+    """Сериализатор для получения токена."""
 
     username = serializers.CharField(max_length=150)
     confirmation_code = serializers.CharField()
@@ -57,7 +57,7 @@ class JWTTokenSerializer(serializers.Serializer):
 
 
 class AdminSerializer(serializers.ModelSerializer):
-    """Сериалайзер для админа"""
+    """Сериализатор для админа."""
 
     email = serializers.EmailField(max_length=254,
                                    validators=[

@@ -1,4 +1,3 @@
-from rest_framework.pagination import LimitOffsetPagination
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
 from django.db.models import Avg
@@ -18,7 +17,7 @@ from api.permissions import (
     IsAdminOrIsModeratorOrIsUser,
     IsAdminOrReadOnly
 )
-from .serializers import (
+from api.serializers import (
     AdminSerializer,
     JWTTokenSerializer,
     UserSerializer,
@@ -31,12 +30,11 @@ from .serializers import (
 )
 from api.utils import send_confirmation_code_on_email
 from reviews.models import Category, Genre, Title, Review
-
 from users.models import MyUser
 
 
 class SignUp(APIView):
-    """Вьюкласс для регистрации пользователей"""
+    """Вьюкласс для регистрации пользователей."""
 
     permission_classes = (AllowAny,)
 
@@ -66,7 +64,7 @@ class SignUp(APIView):
 
 
 class APIToken(APIView):
-    """Вьюкласс для получения токена"""
+    """Вьюкласс для получения токена."""
 
     permission_classes = (AllowAny,)
 
@@ -88,7 +86,7 @@ class APIToken(APIView):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    """Вьюсет для работы админа с пользователями"""
+    """ViewSet для работы админа с пользователями."""
 
     queryset = MyUser.objects.all()
     serializer_class = AdminSerializer
@@ -162,7 +160,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
             return Response(
                 data=msg, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         return super().update(request, *args, **kwargs)
-    
+
 
 class CommentViewSet(viewsets.ModelViewSet):
     """ViewSet для модели Comment."""
