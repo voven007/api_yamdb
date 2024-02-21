@@ -24,8 +24,12 @@ from .serializers import (
     TitleCreateSerializer,
     TitleReadSerializer,
     CommentSerializer,
-    ReviewSerializer)
-from reviews.models import Category, Genre, Title, Review
+
+    ReviewSerializer
+)
+from api.utils import send_confirmation_code_on_email
+from reviews.models import Review, Category, Genre, Title
+
 from users.models import MyUser
 
 
