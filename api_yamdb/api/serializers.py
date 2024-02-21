@@ -14,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         max_length=254,
         validators=[UniqueValidator(
-            queryset=MyUser.objects.all()),])
+            queryset=MyUser.objects.all()), ])
     username = serializers.CharField(
         max_length=150,
         validators=[RegexValidator(
