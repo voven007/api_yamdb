@@ -2,8 +2,6 @@ from rest_framework import exceptions, serializers
 from rest_framework.generics import get_object_or_404
 from rest_framework.validators import UniqueValidator
 from django.core.validators import RegexValidator
-
-
 from reviews.models import Category, Comment, Genre, Title, Review
 from users.models import MyUser, ROLES
 
@@ -11,16 +9,15 @@ from users.models import MyUser, ROLES
 class UserSerializer(serializers.ModelSerializer):
     """Сериализатор для пользователей."""
 
-    email = serializers.EmailField(max_length=254,
-                                   validators=[
-                                       UniqueValidator(
-                                           queryset=MyUser.objects.all()),
-                                   ])
-    username = serializers.CharField(max_length=150,
-                                     validators=[RegexValidator(
-                                         regex=r'^[\w.@+-]+$',
-                                         message='Недопустимый символ в имени'
-                                     )])
+    email = serializers.EmailField(
+        max_length=254,
+        validators=[UniqueValidator(
+            queryset=MyUser.objects.all()),])
+    username = serializers.CharField(
+        max_length=150,
+        validators=[RegexValidator(
+            regex=r'^[\w.@+-]+$',
+            message='Недопустимый символ в имени')])
 
     class Meta:
         model = MyUser
@@ -30,16 +27,9 @@ class UserSerializer(serializers.ModelSerializer):
         username = username.lower()
         if username == "me":
             raise serializers.ValidationError(
-                'Запрещенное имя для регистрации.'
+                'Имя "me" нельзя использовать для регистрации.'
             )
         return username
-
-    def validate_email(self, email):
-        if not email:
-            raise serializers.ValidationError(
-                'Отстутвие обязательного поля'
-            )
-        return email
 
 
 class JWTTokenSerializer(serializers.Serializer):
@@ -59,13 +49,13 @@ class JWTTokenSerializer(serializers.Serializer):
 class AdminSerializer(serializers.ModelSerializer):
     """Сериализатор для админа."""
 
-    email = serializers.EmailField(max_length=254,
-                                   validators=[
-                                       UniqueValidator(
-                                           queryset=MyUser.objects.all()
-                                       )
-                                   ])
-    role = serializers.ChoiceField(choices=ROLES, required=False)
+    email = serializers.EmailField(
+        max_length=254,
+        validators=[UniqueValidator(
+            queryset=MyUser.objects.all())])
+    role = serializers.ChoiceField(
+        choices=ROLES,
+        required=False)
 
     class Meta:
         model = MyUser
