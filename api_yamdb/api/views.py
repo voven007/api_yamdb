@@ -29,7 +29,7 @@ from api.serializers import (
     ReviewSerializer
 )
 from api.utils import send_confirmation_code_on_email
-from reviews.models import Category, Genre, Title, Review
+from reviews.models import Review, Category, Genre, Title
 from users.models import MyUser
 
 
