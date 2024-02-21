@@ -3,6 +3,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Avg
+from rest_framework.decorators import action
 from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -30,26 +31,47 @@ from api.serializers import (
     CommentSerializer,
     ReviewSerializer
 )
+from api import permissions
 from reviews.models import Category, Genre, Title, Review
 
 from users.models import MyUser
 
 
 class UserViewSet(viewsets.ModelViewSet):
+    lookup_field = "username"
     queryset = MyUser.objects.all()
     serializer_class = UserSerializer
     permission_classes = (IsAdmin,)
-    http_method_names = ["get", "patch", "post", "delete"]
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        data = serializer.data
-        return Response(
-            data,
-            status=status.HTTP_201_CREATED,
-        )
+    @action(
+        methods=[
+            "get",
+            "patch",
+        ],
+        detail=False,
+        url_path="me",
+        serializer_class=UserSerializer,
+    )
+    def users_own_profile(self, request):
+        user = request.user
+        if request.method == "GET":
+            serializer = self.get_serializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        if request.method == "PATCH":
+            serializer = self.get_serializer(
+                user,
+                data=request.data,
+                partial=True
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+    def update(self, request, *args, **kwargs):
+        if request.method == 'PUT':
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        return super().update(request, *args, **kwargs)
 
 
 class MeView(RetrieveUpdateAPIView):
