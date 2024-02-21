@@ -13,8 +13,8 @@ from api.mixins import MixinViewSet
 from api.permissions import (
     IsAdmin,
     IsAdminOrIsModeratorOrIsUser,
-    IsAdminOrReadOnly)
-from api.utils import send_confirmation_code_on_email
+    IsAdminOrReadOnly
+)
 from .serializers import (
     AdminSerializer,
     JWTTokenSerializer,
@@ -29,7 +29,7 @@ from reviews.models import Category, Genre, Title, Review
 from users.models import MyUser
 
 
-class SignUpView(APIView):
+class SignUp(APIView):
     """Вьюкласс для регистрации пользователей"""
 
     permission_classes = (AllowAny,)
@@ -59,7 +59,7 @@ class SignUpView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class APITokenView(APIView):
+class APIToken(APIView):
     """Вьюкласс для получения токена"""
 
     permission_classes = (AllowAny,)
@@ -80,7 +80,7 @@ class APITokenView(APIView):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    """Вьюсет для работы админа с пользователями"""
+    """ViewSet для работы админа с пользователями."""
 
     queryset = MyUser.objects.all()
     serializer_class = AdminSerializer
