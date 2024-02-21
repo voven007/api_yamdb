@@ -19,17 +19,25 @@ class MyUser(AbstractUser):
         null=False,
         validators=[RegexValidator(
             regex=r'^[\w.@+-]+$',
-            message='Недопустимый символ в имени'
-        )]
-    )
+            message='Недопустимый символ в имени пользователя'
+        )])
     email = models.EmailField(
-        max_length=254, unique=True, blank=False, null=False
-    )
-    first_name = models.CharField("имя", max_length=150, blank=True)
-    last_name = models.CharField("фамилия", max_length=150, blank=True)
-    bio = models.TextField('Биография', blank=True)
+        max_length=254,
+        unique=True,
+        blank=False,
+        null=False)
+    first_name = models.CharField(
+        max_length=150,
+        blank=True)
+    last_name = models.CharField(
+        max_length=150,
+        blank=True)
+    bio = models.TextField(
+        blank=True)
     role = models.CharField(
-        'Роль пользователя', max_length=15, choices=ROLES, default=USER)
+        max_length=15,
+        choices=ROLES,
+        default=USER)
 
     class Meta:
         verbose_name = "Пользователь"

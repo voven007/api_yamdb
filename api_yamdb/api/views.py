@@ -9,14 +9,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import AccessToken
 
-
 from api.filters import TitleFilter
 from api.mixins import MixinViewSet
 from api.permissions import (
     IsAdmin,
     IsAdminOrIsModeratorOrIsUser,
-    IsAdminOrReadOnly
-)
+    IsAdminOrReadOnly)
 from api.serializers import (
     AdminSerializer,
     JWTTokenSerializer,
@@ -26,14 +24,13 @@ from api.serializers import (
     TitleCreateSerializer,
     TitleReadSerializer,
     CommentSerializer,
-    ReviewSerializer
-)
+    ReviewSerializer)
 from api.utils import send_confirmation_code_on_email
 from reviews.models import Review, Category, Genre, Title
 from users.models import MyUser
 
 
-class SignUp(APIView):
+class SignUpView(APIView):
     """Вьюкласс для регистрации пользователей."""
 
     permission_classes = (AllowAny,)
@@ -47,7 +44,6 @@ class SignUp(APIView):
 
         if user:
             send_confirmation_code_on_email(user.username, user.email)
-
             return Response(status=status.HTTP_200_OK)
 
         if serializer.is_valid():
@@ -63,7 +59,7 @@ class SignUp(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class APIToken(APIView):
+class APITokenView(APIView):
     """Вьюкласс для получения токена."""
 
     permission_classes = (AllowAny,)
@@ -76,10 +72,8 @@ class APIToken(APIView):
             if default_token_generator.check_token(
                user, serializer.data['confirmation_code']):
                 token = AccessToken.for_user(user)
-
                 return Response(
                     {'token': str(token)}, status=status.HTTP_200_OK)
-
             return Response(
                 {'confirmation_code': 'Неверный код подтверждения'},
                 status=status.HTTP_400_BAD_REQUEST)
@@ -105,9 +99,7 @@ class UserViewSet(viewsets.ModelViewSet):
             partial=True)
         if serializer.is_valid():
             serializer.save(role=self.request.user.role)
-
             return Response(serializer.data, status=status.HTTP_200_OK)
-
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
