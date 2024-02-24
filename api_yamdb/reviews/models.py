@@ -1,7 +1,7 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-from reviews.constants import MAX_LEN_TEXT
+from reviews.constants import MAX_LEN_NAME, MAX_LEN_SLUG, MAX_LEN_TEXT
 from reviews.validator import validate_year
 from users.models import MyUser
 
@@ -10,12 +10,12 @@ class Category(models.Model):
     """Модель категорий произведений."""
     name = models.CharField(
         verbose_name='Название категории',
-        max_length=256
+        max_length=MAX_LEN_NAME
     )
     slug = models.SlugField(
         verbose_name='Слаг категории',
         unique=True,
-        max_length=50,
+        max_length=MAX_LEN_SLUG,
     )
 
     class Meta:
@@ -31,12 +31,12 @@ class Genre(models.Model):
     """Модель жанров произведений."""
     name = models.CharField(
         verbose_name='Название жанра',
-        max_length=256
+        max_length=MAX_LEN_NAME
     )
     slug = models.SlugField(
         verbose_name='Слаг жанра',
         unique=True,
-        max_length=50
+        max_length=MAX_LEN_SLUG
     )
 
     class Meta:
@@ -52,7 +52,7 @@ class Title(models.Model):
     """Модель произведений."""
     name = models.CharField(
         verbose_name='Название произведения',
-        max_length=256,
+        max_length=MAX_LEN_NAME,
     )
     year = models.IntegerField(
         verbose_name='Год произведения',

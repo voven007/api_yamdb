@@ -16,7 +16,6 @@ from api.permissions import (
     IsAdminOrIsModeratorOrIsUser,
     IsAdminOrReadOnly)
 from api.serializers import (
-    AdminSerializer,
     JWTTokenSerializer,
     UserSerializer,
     CategorySerializer,
@@ -83,7 +82,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """ViewSet для работы админа с пользователями."""
 
     queryset = MyUser.objects.all()
-    serializer_class = AdminSerializer
+    serializer_class = UserSerializer
     permission_classes = (IsAdmin,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
@@ -93,7 +92,7 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=('get', 'patch'),
             url_name='me', permission_classes=(IsAuthenticated,))
     def me(self, request):
-        serializer = AdminSerializer(
+        serializer = UserSerializer(
             request.user,
             data=request.data,
             partial=True)
