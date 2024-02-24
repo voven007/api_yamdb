@@ -1,8 +1,7 @@
 from rest_framework import exceptions, serializers
 from rest_framework.generics import get_object_or_404
-from rest_framework.validators import UniqueValidator
-from django.core.validators import RegexValidator
 
+from rest_framework.validators import UniqueValidator
 
 from reviews.models import Category, Comment, Genre, Title, Review
 from users.constants import MAX_LEN_EMAIL, MAX_LEN_USERNAME
@@ -15,16 +14,16 @@ class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         max_length=MAX_LEN_EMAIL,
         validators=[UniqueValidator(
-            queryset=MyUser.objects.all()), ])
-    username = serializers.CharField(
-        max_length=MAX_LEN_USERNAME,
-        validators=[RegexValidator(
-            regex=r'^[\w.@+-]+$',
-            message='Недопустимый символ в имени пользователя')])
+            queryset=MyUser.objects.all())])
+    role = serializers.ChoiceField(
+        choices=ROLES,
+        required=False)
 
     class Meta:
         model = MyUser
-        fields = ('username', 'email',)
+        fields = (
+            'username', 'email', 'first_name', 'last_name', 'bio', 'role')
+        read_only_fields = ("role",)
 
     def validate_username(self, username):
         username = username.lower()
@@ -45,24 +44,6 @@ class JWTTokenSerializer(serializers.Serializer):
             raise exceptions.NotFound(
                 'Такого пользователя не существует')
         return data
-
-
-class AdminSerializer(serializers.ModelSerializer):
-    """Сериализатор для админа."""
-
-    email = serializers.EmailField(
-        max_length=MAX_LEN_EMAIL,
-        validators=[UniqueValidator(
-            queryset=MyUser.objects.all())])
-    role = serializers.ChoiceField(
-        choices=ROLES,
-        required=False)
-
-    class Meta:
-        model = MyUser
-        fields = (
-            'username', 'email', 'first_name', 'last_name', 'bio', 'role')
-        read_only_fields = ("role",)
 
 
 class CategorySerializer(serializers.ModelSerializer):
