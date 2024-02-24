@@ -2,6 +2,8 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.validators import RegexValidator
 
+from users.constants import MAX_LEN_EMAIL, MAX_LEN_ROLE, MAX_LEN_USERNAME
+
 USER = 'user'
 ADMIN = 'admin'
 MODERATOR = 'moderator'
@@ -14,7 +16,7 @@ ROLES = ((USER, 'Аутентифицированный пользователь
 class MyUser(AbstractUser):
     """Модель прользователей"""
     username = models.CharField(
-        max_length=150,
+        max_length=MAX_LEN_USERNAME,
         unique=True,
         null=False,
         validators=[RegexValidator(
@@ -22,20 +24,20 @@ class MyUser(AbstractUser):
             message='Недопустимый символ в имени пользователя'
         )])
     email = models.EmailField(
-        max_length=254,
+        max_length=MAX_LEN_EMAIL,
         unique=True,
         blank=False,
         null=False)
     first_name = models.CharField(
-        max_length=150,
+        max_length=MAX_LEN_USERNAME,
         blank=True)
     last_name = models.CharField(
-        max_length=150,
+        max_length=MAX_LEN_USERNAME,
         blank=True)
     bio = models.TextField(
         blank=True)
     role = models.CharField(
-        max_length=15,
+        max_length=MAX_LEN_ROLE,
         choices=ROLES,
         default=USER)
 

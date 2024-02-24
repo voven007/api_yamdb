@@ -5,6 +5,7 @@ from django.core.validators import RegexValidator
 
 
 from reviews.models import Category, Comment, Genre, Title, Review
+from users.constants import MAX_LEN_EMAIL, MAX_LEN_USERNAME
 from users.models import MyUser, ROLES
 
 
@@ -12,11 +13,11 @@ class UserSerializer(serializers.ModelSerializer):
     """Сериализатор для пользователей."""
 
     email = serializers.EmailField(
-        max_length=254,
+        max_length=MAX_LEN_EMAIL,
         validators=[UniqueValidator(
             queryset=MyUser.objects.all()), ])
     username = serializers.CharField(
-        max_length=150,
+        max_length=MAX_LEN_USERNAME,
         validators=[RegexValidator(
             regex=r'^[\w.@+-]+$',
             message='Недопустимый символ в имени пользователя')])
@@ -36,7 +37,7 @@ class UserSerializer(serializers.ModelSerializer):
 class JWTTokenSerializer(serializers.Serializer):
     """Сериализатор для получения токена."""
 
-    username = serializers.CharField(max_length=150)
+    username = serializers.CharField(max_length=MAX_LEN_USERNAME)
     confirmation_code = serializers.CharField()
 
     def validate(self, data):
@@ -50,7 +51,7 @@ class AdminSerializer(serializers.ModelSerializer):
     """Сериализатор для админа."""
 
     email = serializers.EmailField(
-        max_length=254,
+        max_length=MAX_LEN_EMAIL,
         validators=[UniqueValidator(
             queryset=MyUser.objects.all())])
     role = serializers.ChoiceField(
